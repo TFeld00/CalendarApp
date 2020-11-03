@@ -1,0 +1,34 @@
+﻿@model DotNetCoreSqlDb.Models.Resource
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<a asp-action="Delete" asp-route-id="@Model.Id" asp-route-team="@Model.Team" class="float-right btn btn-sm btn-danger">Delete</a>
+<h1>Edit resource</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Team" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-route-team="@Model.Team">Back to Calendar</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

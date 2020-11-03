@@ -1,0 +1,94 @@
+﻿@model CalendarViewModel
+@using DotNetCoreSqlDb.Helpers;
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Calendar</h1>
+
+<div class="table-responsive">
+    <table class="table table-bordered calendar-table">
+        <thead>
+            <tr>
+                <th rowspan="2" scope="row" class="resource table-light"></th>
+                @foreach (var month in Model.GetMonths())
+                {
+                    <th colspan="@month.Days">@month.Month.ToString("MMMM").ToUpper()</th>
+                }
+            </tr>
+            <tr>
+                @for (var date = Model.StartDate; date <= Model.EndDate; date = date.AddDays(1))
+                {
+                    var weekendClass = date.IsWeekend() ? "weekend table-secondary" : null;
+                    <th class="day @weekendClass">
+                        @date.ToString("ddd").ToUpper()
+                        <br />
+                        @date.ToString("dd")
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var resource in Model.Resources)
+            {
+                <tr>
+                    <th class="resource table-info" scope="row">
+                        <a asp-action="Edit" asp-route-id="@resource.Id" asp-route-team="@resource.Team" 
+                           class="text-reset" title="@resource.Name">@resource.Name</a>
+                    </th>
+                    @for (var date = Model.StartDate; date <= Model.EndDate; date = date.AddDays(1))
+                    {
+                        var weekendClass = date.IsWeekend() ? "weekend table-secondary" : null;
+                        DotNetCoreSqlDb.Models.Task task;
+                        if (resource.TasksByDate.TryGetValue(date, out task))
+                        {
+                            <td class="@weekendClass">
+                                <a asp-action="Edit" asp-controller="Tasks"
+                                   asp-route-id="@task.Id"
+                                   title="@task.GetHtmlTooltip()"
+                                   data-toggle="tooltip"
+                                   class="btn btn-block btn-@(task.TaskColor.ToString().ToLower())">
+                                    @task.Title
+                                </a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td class="@weekendClass">
+                                <a asp-action="Create" asp-controller="Tasks"
+                                   asp-route-resourceId="@resource.Id"
+                                   asp-route-date="@date.ToString("yyyy-MM-dd")"
+                                   class="btn btn-block btn-outline-success btn-add">
+                                    Add
+                                </a>
+                            </td>
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<p>
+    <br />
+    <a asp-action="Create" asp-route-team="@Model.Team">Add new Resource</a>
+</p>
+
+
+
+@section Scripts {
+    <script type="text/javascript">
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip(
+                {
+                    placement: 'bottom',
+                    html: true,
+                    delay: { "show": 300, "hide": 100 },
+
+                })
+        })
+    </script>
+
+}

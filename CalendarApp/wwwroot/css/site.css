@@ -1,56 +1,124 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
-}
 
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-  font-size: 14px;
-}
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    font-size: 14px;
 }
 
-.border-top {
-  border-top: 1px solid #e5e5e5;
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
 }
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
+
+.header {
+    height: 10px;
+    margin-top: -10px;
 }
 
 .box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .15);
 }
 
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
 }
+
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  /* Set the fixed height of the footer here */
-  height: 60px;
-  line-height: 60px; /* Vertically center the text there */
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    /* Set the fixed height of the footer here */
+    height: 60px;
+    line-height: 60px; /* Vertically center the text there */
+}
+
+
+/* -------------------------------------------------- */
+
+.calendar-table {
+    --cell-width-resource: 110px;
+    --cell-width-day: 110px;
+    --cell-width-weekend: 70px;
+}
+
+@media screen and (min-width: 576px) {
+    .calendar-table {
+        --cell-width-resource: 150px;
+        --cell-width-day: 140px;
+        --cell-width-weekend: 90px;
+    }
+}
+
+.calendar-table th.resource {
+    width: var(--cell-width-resource);
+    min-width: var(--cell-width-resource);
+    max-width: var(--cell-width-resource);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.calendar-table th.day {
+    width: var(--cell-width-day);
+    min-width: var(--cell-width-day);
+    max-width: var(--cell-width-day);
+    text-align: center;
+}
+
+    .calendar-table th.day.weekend {
+        width: var(--cell-width-weekend);
+        min-width: var(--cell-width-weekend);
+        max-width: var(--cell-width-weekend);
+    }
+
+
+.calendar-table td {
+    padding: 0;
+}
+
+    .calendar-table td a.btn {
+        width: var(--cell-width-day);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 0.75rem;
+    }
+
+    .calendar-table td.weekend a.btn {
+        width: var(--cell-width-weekend);
+    }
+
+
+.calendar-table th[scope=row] {
+    position: -webkit-sticky;
+    position: sticky;
+    left: 0;
+    box-shadow: 1px 0px 1px 0px rgba(0, 0, 0, .5);
+}
+
+.calendar-table a.btn.btn-add {
+    color: rgba(0,0,0,0);
+    border-color: rgba(0,0,0,0);
+}
+
+    .calendar-table a.btn.btn-add:hover {
+        color: white;
+    }
+
+
+.tooltip-inner {
+    text-align: left;
 }

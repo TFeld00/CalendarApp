@@ -41,7 +41,7 @@ namespace DotNetCoreSqlDb
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Calendar/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 //app.UseHsts();
             }
@@ -57,7 +57,7 @@ namespace DotNetCoreSqlDb
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Todos}/{action=Index}/{id?}");
+                    pattern: "{controller=Calendar}/{action=Index}/{id?}");
             });
         }
     }
