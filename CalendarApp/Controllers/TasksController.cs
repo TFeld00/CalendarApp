@@ -17,8 +17,9 @@ namespace DotNetCoreSqlDb.Controllers
         }
 
         // GET: Calendar/AddTask
-        public async Task<IActionResult> Create(int resourceId, DateTime date)
+        public async Task<IActionResult> Create(int resourceId, DateTime date, string team)
         {
+            ViewBag.Team = team;
             var resource = await _context.Resources.FindAsync(resourceId);
 
             var task = new Models.Task
@@ -35,21 +36,22 @@ namespace DotNetCoreSqlDb.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,Date,ResourceId,TaskColor")] Models.Task task)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,Date,ResourceId,TaskColor")] Models.Task task, string team)
         {
+            ViewBag.Team = team;
             if (ModelState.IsValid)
             {
                 _context.Add(task);
                 await _context.SaveChangesAsync();
-                var resource = await _context.Resources.FindAsync(task.ResourceId);
-                return RedirectToAction(nameof(Index), "Calendar", new { team = resource.Team });
+                return RedirectToAction(nameof(Index), "Calendar", new { team });
             }
             return View(task);
         }
 
         // GET: Tasks/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, string team)
         {
+            ViewBag.Team = team;
             if (id == null)
             {
                 return NotFound();
@@ -68,8 +70,9 @@ namespace DotNetCoreSqlDb.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Date,ResourceId,TaskColor")] Models.Task task)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Date,ResourceId,TaskColor")] Models.Task task, string team)
         {
+            ViewBag.Team = team;
             if (id != task.Id)
             {
                 return NotFound();
@@ -94,15 +97,16 @@ namespace DotNetCoreSqlDb.Controllers
                     }
                 }
                 var resource = await _context.Resources.FindAsync(task.ResourceId);
-                return RedirectToAction(nameof(Index), "Calendar", new { team = resource.Team });
+                return RedirectToAction(nameof(Index), "Calendar", new { team });
             }
             return View(task);
         }
 
 
         // GET: Tasks/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? id,string team)
         {
+            ViewBag.Team = team;
             if (id == null)
             {
                 return NotFound();
@@ -120,10 +124,9 @@ namespace DotNetCoreSqlDb.Controllers
         // POST: Tasks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, string team)
         {
             var task = await _context.Tasks.Include(t => t.Resource).FirstOrDefaultAsync(t => t.Id == id);
-            var team = task.Resource.Team;
 
             _context.Tasks.Remove(task);
             await _context.SaveChangesAsync();

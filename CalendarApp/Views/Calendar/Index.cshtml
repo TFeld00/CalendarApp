@@ -5,6 +5,18 @@
     ViewData["Title"] = "Index";
 }
 
+@if (Model.NoTeam)
+{
+    if (Model.ShowAll)
+    {
+        <a asp-action="Index" asp-route-team="@Model.Team" class="btn btn-info float-right">Show only resources w/o team</a>
+    }
+    else
+    {
+        <a asp-action="Index" asp-route-team="@Model.Team" asp-route-all="true" class="btn btn-info float-right">Show all resources</a>
+    }
+}
+
 <h1>Calendar</h1>
 
 <div class="table-responsive">
@@ -34,7 +46,7 @@
             {
                 <tr>
                     <th class="resource table-info" scope="row">
-                        <a asp-action="Edit" asp-route-id="@resource.Id" asp-route-team="@resource.Team" 
+                        <a asp-action="Edit" asp-route-id="@resource.Id" asp-route-team="@Model.Team"
                            class="text-reset" title="@resource.Name">@resource.Name</a>
                     </th>
                     @for (var date = Model.StartDate; date <= Model.EndDate; date = date.AddDays(1))
@@ -46,6 +58,7 @@
                             <td class="@weekendClass">
                                 <a asp-action="Edit" asp-controller="Tasks"
                                    asp-route-id="@task.Id"
+                                   asp-route-team="@Model.Team"
                                    title="@task.GetHtmlTooltip()"
                                    data-toggle="tooltip"
                                    class="btn btn-block btn-@(task.TaskColor.ToString().ToLower())">
@@ -59,6 +72,7 @@
                                 <a asp-action="Create" asp-controller="Tasks"
                                    asp-route-resourceId="@resource.Id"
                                    asp-route-date="@date.ToString("yyyy-MM-dd")"
+                                   asp-route-team="@Model.Team"
                                    class="btn btn-block btn-outline-success btn-add">
                                     Add
                                 </a>
@@ -71,10 +85,21 @@
     </table>
 </div>
 
-<p>
-    <br />
-    <a asp-action="Create" asp-route-team="@Model.Team">Add new Resource</a>
-</p>
+<div>
+    @if (Model.NoTeam)
+    {
+        if (!Model.ShowAll)
+        {
+            <br />
+            <a asp-action="Create" asp-route-team="@Model.Team">Add new Resource</a>
+        }
+    }
+    else
+    {
+        <br />
+        <a asp-action="Create" asp-route-team="@Model.Team">Add new Resource</a>
+    }
+</div>
 
 
 

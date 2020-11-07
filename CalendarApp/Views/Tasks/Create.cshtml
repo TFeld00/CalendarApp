@@ -37,6 +37,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ResourceId" />
             <input type="hidden" asp-for="Date" />
+            <input type="hidden" name="Team" value="@ViewBag.Team" />
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />

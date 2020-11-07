@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace DotNetCoreSqlDb.Controllers
 {
-    [Route("{team}/[controller]/[action]")]
+    //[Route("{team}/[controller]/[action]")]
     public class CalendarController : Controller
     {
         private readonly MyDatabaseContext _context;
@@ -26,13 +26,20 @@ namespace DotNetCoreSqlDb.Controllers
         }
 
         // GET: Calendar
-        [Route("~/{team}")]
-        public async Task<IActionResult> Index(string team, int width = 14)
+        //[Route("~/{team}")]
+        public async Task<IActionResult> Index(string team, bool all = false, int width = 14)
         {
-            var resources = await _context.Resources
-                .Where(r => r.Team.Equals(team))
-                .Include(r => r.Tasks)
-                .OrderBy(r => r.Name)
+            IQueryable<Resource> resourceQuery = _context.Resources;
+
+            bool noTeam = string.IsNullOrWhiteSpace(team);
+            if (!noTeam || !all)
+            {
+                resourceQuery = resourceQuery.Where(r => r.Team.Equals(team));
+            }
+
+            var resources = await resourceQuery.Include(r => r.Tasks)
+                .OrderBy(r => r.Team)
+                .ThenBy(r => r.Name)
                 .ToListAsync();
             var startDate = DateTime.Now.StartOfWeek(DayOfWeek.Monday);
 
@@ -41,7 +48,9 @@ namespace DotNetCoreSqlDb.Controllers
                 Team = team,
                 Resources = resources,
                 StartDate = startDate,
-                EndDate = startDate.AddDays(width - 1)
+                EndDate = startDate.AddDays(width - 1),
+                NoTeam = noTeam,
+                ShowAll = all
             };
             return View(vm);
         }
@@ -73,8 +82,9 @@ namespace DotNetCoreSqlDb.Controllers
         }
 
         // GET: Calendar/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, string team)
         {
+            ViewBag.Team = team;
             if (id == null)
             {
                 return NotFound();
@@ -93,7 +103,7 @@ namespace DotNetCoreSqlDb.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string team, int id, [Bind("Id,Name,Team")] Resource resource)
+        public async Task<IActionResult> Edit(string teamPage, int id, [Bind("Id,Name,Team")] Resource resource)
         {
             if (id != resource.Id)
             {
@@ -118,15 +128,16 @@ namespace DotNetCoreSqlDb.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index), new { team });
+                return RedirectToAction(nameof(Index), new { team = teamPage });
             }
             return View(resource);
         }
 
 
         // GET: Calendar/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? id, string team)
         {
+            ViewBag.Team = team;
             if (id == null)
             {
                 return NotFound();
