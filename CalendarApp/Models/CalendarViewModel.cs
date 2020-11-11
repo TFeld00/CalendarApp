@@ -10,6 +10,8 @@ namespace DotNetCoreSqlDb.Models
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
+        public DateTime Today { get; } = DateTime.Today;
+
         public string Team { get; set; }
         public bool NoTeam { get; internal set; }
         public bool ShowAll { get; internal set; }
