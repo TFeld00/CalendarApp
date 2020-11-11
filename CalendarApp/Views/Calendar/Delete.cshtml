@@ -21,7 +21,8 @@
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="hidden" name="Team" value="@ViewBag.Team" />
+        <input type="hidden" name="All" value="@ViewBag.All" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index" asp-route-team="@Model.Team">Back to Calendar</a>
+        <a asp-action="Index" asp-route-team="@ViewBag.Team" asp-route-all="@ViewBag.All">Back to Calendar</a>
     </form>
 </div>

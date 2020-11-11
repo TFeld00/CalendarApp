@@ -17,10 +17,16 @@ namespace DotNetCoreSqlDb.Controllers
         }
 
         // GET: Calendar/AddTask
-        public async Task<IActionResult> Create(int resourceId, DateTime date, string team)
+        public async Task<IActionResult> Create(int resourceId, DateTime date, string team, string all)
         {
             ViewBag.Team = team;
+            ViewBag.All = all;
             var resource = await _context.Resources.FindAsync(resourceId);
+
+            if (await _context.Tasks.AnyAsync(t => t.ResourceId == resourceId && t.Date == date))
+            {
+                return RedirectToAction(nameof(Index), "Calendar", new { team, all });
+            }
 
             var task = new Models.Task
             {
@@ -36,22 +42,24 @@ namespace DotNetCoreSqlDb.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,Date,ResourceId,TaskColor")] Models.Task task, string team)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,Date,ResourceId,TaskColor")] Models.Task task, string team, string all)
         {
             ViewBag.Team = team;
+            ViewBag.All = all;
             if (ModelState.IsValid)
             {
                 _context.Add(task);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index), "Calendar", new { team });
+                return RedirectToAction(nameof(Index), "Calendar", new { team, all });
             }
             return View(task);
         }
 
         // GET: Tasks/Edit/5
-        public async Task<IActionResult> Edit(int? id, string team)
+        public async Task<IActionResult> Edit(int? id, string team, string all)
         {
             ViewBag.Team = team;
+            ViewBag.All = all;
             if (id == null)
             {
                 return NotFound();
@@ -70,9 +78,10 @@ namespace DotNetCoreSqlDb.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Date,ResourceId,TaskColor")] Models.Task task, string team)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Date,ResourceId,TaskColor")] Models.Task task, string team, string all)
         {
             ViewBag.Team = team;
+            ViewBag.All = all;
             if (id != task.Id)
             {
                 return NotFound();
@@ -97,16 +106,17 @@ namespace DotNetCoreSqlDb.Controllers
                     }
                 }
                 var resource = await _context.Resources.FindAsync(task.ResourceId);
-                return RedirectToAction(nameof(Index), "Calendar", new { team });
+                return RedirectToAction(nameof(Index), "Calendar", new { team, all });
             }
             return View(task);
         }
 
 
         // GET: Tasks/Delete/5
-        public async Task<IActionResult> Delete(int? id,string team)
+        public async Task<IActionResult> Delete(int? id, string team, string all)
         {
             ViewBag.Team = team;
+            ViewBag.All = all;
             if (id == null)
             {
                 return NotFound();
@@ -124,13 +134,13 @@ namespace DotNetCoreSqlDb.Controllers
         // POST: Tasks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id, string team)
+        public async Task<IActionResult> DeleteConfirmed(int id, string team, string all)
         {
             var task = await _context.Tasks.Include(t => t.Resource).FirstOrDefaultAsync(t => t.Id == id);
 
             _context.Tasks.Remove(task);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index), "Calendar", new { team });
+            return RedirectToAction(nameof(Index), "Calendar", new { team, all });
         }
 
     }

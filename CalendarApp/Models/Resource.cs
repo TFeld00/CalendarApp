@@ -11,13 +11,16 @@ namespace DotNetCoreSqlDb.Models
         private Dictionary<DateTime, Task> tasksByDate;
 
         public int Id { get; set; }
-        
+
         [Required]
         public string Name { get; set; }
 
         public List<Task> Tasks { get; set; } = new List<Task>();
 
-        public string Team { get; set; }
+        public string TeamName { get; set; }
+
+        [NotMapped]
+        public Team Team { get; set; }
 
         [NotMapped]
         public Dictionary<DateTime, Task> TasksByDate
@@ -26,7 +29,12 @@ namespace DotNetCoreSqlDb.Models
             {
                 if (tasksByDate == null)
                 {
-                    tasksByDate = Tasks.ToDictionary(t => t.Date, t => t);
+                    tasksByDate = new Dictionary<DateTime, Task>();
+                    foreach (var t in Tasks)
+                    {
+                        if (!tasksByDate.ContainsKey(t.Date))
+                            tasksByDate.Add(t.Date, t);
+                    }
                 }
                 return tasksByDate;
             }

@@ -4,7 +4,7 @@
     ViewData["Title"] = "Edit";
 }
 
-<a asp-action="Delete" asp-route-id="@Model.Id" asp-route-team="@Model.Team" class="float-right btn btn-sm btn-danger">Delete</a>
+<a asp-action="Delete" asp-route-id="@Model.Id" asp-route-team="@ViewBag.Team" class="float-right btn btn-sm btn-danger">Delete</a>
 <h1>Edit resource</h1>
 <hr />
 <div class="row">
@@ -12,8 +12,9 @@
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="Team" />
+            <input type="hidden" asp-for="TeamName" />
             <input type="hidden" name="TeamPage" value="@ViewBag.Team" />
+            <input type="hidden" name="All" value="@ViewBag.All" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
@@ -27,7 +28,7 @@
 </div>
 
 <div>
-    <a asp-action="Index" asp-route-team="@Model.Team">Back to Calendar</a>
+    <a asp-action="Index" asp-route-team="@ViewBag.Team" asp-route-all="@ViewBag.All">Back to Calendar</a>
 </div>
 
 @section Scripts {

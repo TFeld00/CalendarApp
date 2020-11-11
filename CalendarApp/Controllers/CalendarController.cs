@@ -6,6 +6,7 @@ using System;
 using DotNetCoreSqlDb.Helpers;
 using System.Linq;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace DotNetCoreSqlDb.Controllers
 {
@@ -27,20 +28,36 @@ namespace DotNetCoreSqlDb.Controllers
 
         // GET: Calendar
         //[Route("~/{team}")]
-        public async Task<IActionResult> Index(string team, bool all = false, int width = 14)
+        public async Task<IActionResult> Index(string team, string all, int width = 14)
         {
+            ViewBag.All = all;
             IQueryable<Resource> resourceQuery = _context.Resources;
 
+            var showAll = !string.IsNullOrEmpty(all);
+
             bool noTeam = string.IsNullOrWhiteSpace(team);
-            if (!noTeam || !all)
+            if (!noTeam || !showAll)
             {
-                resourceQuery = resourceQuery.Where(r => r.Team.Equals(team));
+                resourceQuery = resourceQuery.Where(r => r.TeamName.Equals(team));
             }
 
-            var resources = await resourceQuery.Include(r => r.Tasks)
-                .OrderBy(r => r.Team)
-                .ThenBy(r => r.Name)
-                .ToListAsync();
+            resourceQuery = resourceQuery.Include(r => r.Tasks)
+                .OrderBy(r => r.TeamName)
+                .ThenBy(r => r.Name);
+
+            var x =
+               from r in resourceQuery
+               join t in _context.Teams on r.TeamName equals t.Name into rt
+               from t in rt.DefaultIfEmpty()
+               select new { r, t };
+
+            List<Resource> resources = new List<Resource>();
+            foreach (var rt in await x.ToListAsync())
+            {
+                rt.r.Team = rt.t;
+                resources.Add(rt.r);
+            }
+
             var startDate = DateTime.Now.StartOfWeek(DayOfWeek.Monday);
 
             var vm = new CalendarViewModel
@@ -50,7 +67,7 @@ namespace DotNetCoreSqlDb.Controllers
                 StartDate = startDate,
                 EndDate = startDate.AddDays(width - 1),
                 NoTeam = noTeam,
-                ShowAll = all
+                ShowAll = showAll
             };
             return View(vm);
         }
@@ -60,7 +77,7 @@ namespace DotNetCoreSqlDb.Controllers
         {
             var resource = new Resource
             {
-                Team = team
+                TeamName = team
             };
             return View(resource);
         }
@@ -70,21 +87,22 @@ namespace DotNetCoreSqlDb.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(string team, [Bind("Id,Name,Team")] Resource resource)
+        public async Task<IActionResult> Create(string team, [Bind("Id,Name,TeamName")] Resource resource, string all)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(resource);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index), new { team });
+                return RedirectToAction(nameof(Index), new { team, all });
             }
             return View(resource);
         }
 
         // GET: Calendar/Edit/5
-        public async Task<IActionResult> Edit(int? id, string team)
+        public async Task<IActionResult> Edit(int? id, string team, string all)
         {
             ViewBag.Team = team;
+            ViewBag.All = all;
             if (id == null)
             {
                 return NotFound();
@@ -103,7 +121,7 @@ namespace DotNetCoreSqlDb.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string teamPage, int id, [Bind("Id,Name,Team")] Resource resource)
+        public async Task<IActionResult> Edit(string teamPage, int id, [Bind("Id,Name,TeamName")] Resource resource, string all)
         {
             if (id != resource.Id)
             {
@@ -128,16 +146,17 @@ namespace DotNetCoreSqlDb.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index), new { team = teamPage });
+                return RedirectToAction(nameof(Index), new { team = teamPage, all });
             }
             return View(resource);
         }
 
 
         // GET: Calendar/Delete/5
-        public async Task<IActionResult> Delete(int? id, string team)
+        public async Task<IActionResult> Delete(int? id, string team, string all)
         {
             ViewBag.Team = team;
+            ViewBag.All = all;
             if (id == null)
             {
                 return NotFound();
@@ -155,12 +174,12 @@ namespace DotNetCoreSqlDb.Controllers
         // POST: Calendar/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string team, int id)
+        public async Task<IActionResult> DeleteConfirmed(string team, int id, string all)
         {
             var resource = await _context.Resources.FindAsync(id);
             _context.Resources.Remove(resource);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index), new { team });
+            return RedirectToAction(nameof(Index), new { team, all });
         }
 
         private bool ResourceExists(int id)

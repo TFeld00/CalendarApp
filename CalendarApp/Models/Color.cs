@@ -2,7 +2,7 @@
 
 namespace DotNetCoreSqlDb.Models
 {
-    public enum TaskColor
+    public enum Color
     {
         [Display(Name = "Primary", Order = 2)]
         Primary,

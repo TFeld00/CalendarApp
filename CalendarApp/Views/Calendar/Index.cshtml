@@ -9,11 +9,11 @@
 {
     if (Model.ShowAll)
     {
-        <a asp-action="Index" asp-route-team="@Model.Team" class="btn btn-info float-right">Show only resources w/o team</a>
+<a asp-action="Index" asp-route-team="@Model.Team" class="btn btn-info float-right">Show only resources w/o team</a>
     }
     else
     {
-        <a asp-action="Index" asp-route-team="@Model.Team" asp-route-all="true" class="btn btn-info float-right">Show all resources</a>
+<a asp-action="Index" asp-route-team="@Model.Team" asp-route-all="true" class="btn btn-info float-right">Show all resources</a>
     }
 }
 
@@ -26,60 +26,76 @@
                 <th rowspan="2" scope="row" class="resource table-light"></th>
                 @foreach (var month in Model.GetMonths())
                 {
-                    <th colspan="@month.Days">@month.Month.ToString("MMMM").ToUpper()</th>
+                <th colspan="@month.Days">@month.Month.ToString("MMMM").ToUpper()</th>
                 }
             </tr>
             <tr>
                 @for (var date = Model.StartDate; date <= Model.EndDate; date = date.AddDays(1))
                 {
                     var weekendClass = date.IsWeekend() ? "weekend table-secondary" : null;
-                    <th class="day @weekendClass">
-                        @date.ToString("ddd").ToUpper()
-                        <br />
-                        @date.ToString("dd")
-                    </th>
+                <th class="day @weekendClass">
+                    @date.ToString("ddd").ToUpper()
+                    <br />
+                    @date.ToString("dd")
+                </th>
                 }
             </tr>
         </thead>
         <tbody>
             @foreach (var resource in Model.Resources)
             {
-                <tr>
-                    <th class="resource table-info" scope="row">
-                        <a asp-action="Edit" asp-route-id="@resource.Id" asp-route-team="@Model.Team"
-                           class="text-reset" title="@resource.Name">@resource.Name</a>
-                    </th>
-                    @for (var date = Model.StartDate; date <= Model.EndDate; date = date.AddDays(1))
+            <tr>
+                @{
+                    var showBadge = (Model.NoTeam && resource.Team != null && !string.IsNullOrEmpty(resource.Team.Badge));
+                }
+                <th class="resource table-info @(showBadge ? "pl-1" : "")" scope="row">
+                    @if(showBadge)
+                    {
+                    <span class="badge badge-@(resource.Team.Color.ToString().ToLower())">
+                        @resource.Team.Badge
+                    </span>
+                    }
+                    <a asp-action="Edit" asp-route-id="@resource.Id"
+                       asp-route-team="@Model.Team"
+                       asp-route-all="@ViewBag.All"
+                       class="text-reset" title="@resource.Name">
+
+                        @resource.Name
+                    </a>
+                </th>
+                @for (var date = Model.StartDate; date <= Model.EndDate; date = date.AddDays(1))
                     {
                         var weekendClass = date.IsWeekend() ? "weekend table-secondary" : null;
                         DotNetCoreSqlDb.Models.Task task;
                         if (resource.TasksByDate.TryGetValue(date, out task))
                         {
-                            <td class="@weekendClass">
-                                <a asp-action="Edit" asp-controller="Tasks"
-                                   asp-route-id="@task.Id"
-                                   asp-route-team="@Model.Team"
-                                   title="@task.GetHtmlTooltip()"
-                                   data-toggle="tooltip"
-                                   class="btn btn-block btn-@(task.TaskColor.ToString().ToLower())">
-                                    @task.Title
-                                </a>
-                            </td>
+                <td class="@weekendClass">
+                    <a asp-action="Edit" asp-controller="Tasks"
+                       asp-route-id="@task.Id"
+                       asp-route-team="@Model.Team"
+                       asp-route-all="@ViewBag.All"
+                       title="@task.GetHtmlTooltip()"
+                       data-toggle="tooltip"
+                       class="btn btn-block btn-@(task.TaskColor.ToString().ToLower())">
+                        @task.Title
+                    </a>
+                </td>
                         }
                         else
                         {
-                            <td class="@weekendClass">
-                                <a asp-action="Create" asp-controller="Tasks"
-                                   asp-route-resourceId="@resource.Id"
-                                   asp-route-date="@date.ToString("yyyy-MM-dd")"
-                                   asp-route-team="@Model.Team"
-                                   class="btn btn-block btn-outline-success btn-add">
-                                    Add
-                                </a>
-                            </td>
+                <td class="@weekendClass">
+                    <a asp-action="Create" asp-controller="Tasks"
+                       asp-route-resourceId="@resource.Id"
+                       asp-route-date="@date.ToString("yyyy-MM-dd")"
+                       asp-route-team="@Model.Team"
+                       asp-route-all="@ViewBag.All"
+                       class="btn btn-block btn-outline-success btn-add">
+                        Add
+                    </a>
+                </td>
                         }
                     }
-                </tr>
+            </tr>
             }
         </tbody>
     </table>
@@ -90,14 +106,14 @@
     {
         if (!Model.ShowAll)
         {
-            <br />
-            <a asp-action="Create" asp-route-team="@Model.Team">Add new Resource</a>
+    <br />
+    <a asp-action="Create" asp-route-team="@Model.Team" asp-route-all="@ViewBag.All">Add new Resource</a>
         }
     }
     else
     {
-        <br />
-        <a asp-action="Create" asp-route-team="@Model.Team">Add new Resource</a>
+    <br />
+    <a asp-action="Create" asp-route-team="@Model.Team" asp-route-all="@ViewBag.All">Add new Resource</a>
     }
 </div>
 
