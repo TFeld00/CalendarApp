@@ -119,6 +119,11 @@ body {
     }
 
 
+.calendar-table .table-active {
+    border-left-width: 3px;
+    border-right-width: 3px;
+}
+
 .tooltip-inner {
     text-align: left;
 }
