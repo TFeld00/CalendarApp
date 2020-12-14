@@ -12,6 +12,8 @@ namespace DotNetCoreSqlDb.Models
 
         public DateTime Today { get; } = DateTime.Today;
 
+        public List<DateTime> Holidays { get; set; } = new List<DateTime>();
+
         public string Team { get; set; }
         public bool NoTeam { get; internal set; }
         public bool ShowAll { get; internal set; }

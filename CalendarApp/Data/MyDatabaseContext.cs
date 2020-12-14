@@ -12,5 +12,6 @@ namespace DotNetCoreSqlDb.Models
         public DbSet<DotNetCoreSqlDb.Models.Resource> Resources { get; set; }
         public DbSet<DotNetCoreSqlDb.Models.Task> Tasks { get; set; }
         public DbSet<DotNetCoreSqlDb.Models.Team> Teams { get; set; }
+        public DbSet<DotNetCoreSqlDb.Models.Holiday> Holidays { get; set; }
     }
 }

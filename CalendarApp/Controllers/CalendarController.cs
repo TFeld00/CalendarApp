@@ -59,13 +59,17 @@ namespace DotNetCoreSqlDb.Controllers
             }
 
             var startDate = DateTime.Now.StartOfWeek(DayOfWeek.Monday);
+            var endDate = startDate.AddDays(width - 1);
+
+            var holidays = _context.Holidays.Where(h => startDate <= h.Date && h.Date <= endDate).Select(h => h.Date).ToList();
 
             var vm = new CalendarViewModel
             {
                 Team = team,
                 Resources = resources,
                 StartDate = startDate,
-                EndDate = startDate.AddDays(width - 1),
+                EndDate = endDate,
+                Holidays = holidays,
                 NoTeam = noTeam,
                 ShowAll = showAll
             };

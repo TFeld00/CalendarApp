@@ -32,7 +32,7 @@
             <tr>
                 @for (var date = Model.StartDate; date <= Model.EndDate; date = date.AddDays(1))
                 {
-                    var weekendClass = date.IsWeekend() ? "weekend table-secondary" : null;
+                    var weekendClass = date.IsDayOff(Model.Holidays) ? "weekend table-secondary" : null;
                     var activeClass = date == Model.Today ? "table-active" : null;
                     var cellClass = weekendClass != null ? weekendClass + " " + activeClass : activeClass;
                 <th class="day @cellClass">
@@ -67,7 +67,7 @@
                 </th>
                 @for (var date = Model.StartDate; date <= Model.EndDate; date = date.AddDays(1))
                     {
-                        var weekendClass = date.IsWeekend() ? "weekend table-secondary" : null;
+                        var weekendClass = date.IsDayOff(Model.Holidays) ? "weekend table-secondary" : null;
                         var activeClass = date == Model.Today ? "table-active" : null;
                         var cellClass = weekendClass != null ? weekendClass + " " + activeClass : activeClass;
                         DotNetCoreSqlDb.Models.Task task;
