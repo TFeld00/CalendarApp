@@ -7,7 +7,7 @@
 
 <h1>Edit task</h1>
 
-<a asp-action="Delete" asp-route-id="@Model.Id" asp-route-team="@ViewBag.Team" class="float-right btn btn-sm btn-danger">Delete</a>
+<a asp-action="Delete" asp-route-id="@Model.Id" asp-route-team="@ViewBag.Team" asp-route-width="@ViewBag.Width" asp-route-all="@ViewBag.All" class="float-right btn btn-sm btn-danger">Delete</a>
 <h2 class="h4">@Model.Resource.Name - @Model.Date.ToString("yyyy-MM-dd")</h2>
 
 <hr />
@@ -44,6 +44,7 @@
             <input type="hidden" asp-for="Date" />
             <input type="hidden" name="Team" value="@ViewBag.Team" />
             <input type="hidden" name="All" value="@ViewBag.All" />
+            <input type="hidden" name="Width" value="@ViewBag.Width" />
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
@@ -75,7 +76,7 @@
 </form>
 
 <div>
-    <a asp-controller="Calendar" asp-action="Index" asp-route-team="@ViewBag.Team" asp-route-all="@ViewBag.All">Back to Calendar</a>
+    <a asp-controller="Calendar" asp-action="Index" asp-route-team="@ViewBag.Team" asp-route-all="@ViewBag.All" asp-route-width="@ViewBag.Width">Back to Calendar</a>
 </div>
 
 @section Scripts {

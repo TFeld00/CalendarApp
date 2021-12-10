@@ -9,11 +9,11 @@
 {
     if (Model.ShowAll)
     {
-<a asp-action="Index" asp-route-team="@Model.Team" class="btn btn-info float-right">Show only resources w/o team</a>
+<a asp-action="Index" asp-route-team="@Model.Team" asp-route-width="@ViewBag.Width" class="btn btn-info float-right">Show only resources w/o team</a>
     }
     else
     {
-<a asp-action="Index" asp-route-team="@Model.Team" asp-route-all="true" class="btn btn-info float-right">Show all resources</a>
+<a asp-action="Index" asp-route-team="@Model.Team" asp-route-width="@ViewBag.Width" asp-route-all="true" class="btn btn-info float-right">Show all resources</a>
     }
 }
 
@@ -60,6 +60,7 @@
                     <a asp-action="Edit" asp-route-id="@resource.Id"
                        asp-route-team="@Model.Team"
                        asp-route-all="@ViewBag.All"
+                       asp-route-width="@ViewBag.Width"
                        class="text-reset" title="@resource.Name">
 
                         @resource.Name
@@ -78,6 +79,7 @@
                        asp-route-id="@task.Id"
                        asp-route-team="@Model.Team"
                        asp-route-all="@ViewBag.All"
+                       asp-route-width="@ViewBag.Width"
                        title="@task.GetHtmlTooltip()"
                        data-toggle="tooltip"
                        class="btn btn-block btn-@(task.TaskColor.ToString().ToLower())">
@@ -93,6 +95,7 @@
                        asp-route-date="@date.ToString("yyyy-MM-dd")"
                        asp-route-team="@Model.Team"
                        asp-route-all="@ViewBag.All"
+                       asp-route-width="@ViewBag.Width"
                        class="btn btn-block btn-outline-success btn-add">
                         Add
                     </a>
@@ -111,13 +114,13 @@
         if (!Model.ShowAll)
         {
     <br />
-    <a asp-action="Create" asp-route-team="@Model.Team" asp-route-all="@ViewBag.All">Add new Resource</a>
+    <a asp-action="Create" asp-route-team="@Model.Team" asp-route-all="@ViewBag.All" asp-route-width="@ViewBag.Width">Add new Resource</a>
         }
     }
     else
     {
     <br />
-    <a asp-action="Create" asp-route-team="@Model.Team" asp-route-all="@ViewBag.All">Add new Resource</a>
+    <a asp-action="Create" asp-route-team="@Model.Team" asp-route-all="@ViewBag.All" asp-route-width="@ViewBag.Width">Add new Resource</a>
     }
 </div>
 
